@@ -9,7 +9,7 @@
 #                  Tested in Ubuntu 16.04 with different captive portals in   #
 #                  airports and hotels all over the world.                    #
 #                                                                             #
-#   REQUIREMENTS:  coreutils, sipcalc, nmap                                   #
+#   REQUIREMENTS:  coreutils, ipcalc, nmap                                   #
 #          NOTES:  Let the information always be free!                        #
 #         AUTHOR:  Stanislav "systematicat" Kotivetc, <@systematicat>         #
 #        COMPANY:  Hire me! I am a cool dude!                                 #
@@ -28,7 +28,7 @@ gateway="$(ip -o -4 route show to default | awk '/via/ {print $3}')"
 broadcast="$(ip -o -4 addr show dev "$interface" | awk '/brd/ {print $6}')"
 ipmask="$(ip -o -4 addr show dev "$interface" | awk '/inet/ {print $4}')"
 netmask="$(printf "%s\n" "$ipmask" | cut -d "/" -f 2)"
-netaddress="$(sipcalc "$ipmask" | awk '/Network address/ {print $NF}')"
+netaddress="$(ipcalc "$ipmask" | awk '/Network address/ {print $NF}')"
 network="$netaddress/$netmask"
 macaddress="$(ip -0 addr show dev "$interface" \
               | awk '/link/ && /ether/ {print $2}' \
@@ -62,7 +62,7 @@ function clean_up() {
 function calc_network() {
   printf "%b\n" "Exploring network in \"$wifissid\" Wi-Fi hotspot."
   if [[ "$netmask" -lt 24 ]]; then
-    sipcalc -s 24 "$network" \
+    ipcalc -s 24 "$network" \
     | awk '/Network/ {print $3}' > "$tmp"/networklist.$$.txt
     printf "%b\n" "Splitting up network $network into smaller chunks."
   else
